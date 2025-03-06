@@ -1,0 +1,49 @@
+# Ignore Visual Studio-specific files
+.vs/
+*.user
+*.suo
+*.ntvs*
+*.njsproj
+*.sln.docstates
+
+# Ignore build output
+bin/
+obj/
+out/
+*.dll
+*.exe
+*.pdb
+*.log
+*.cache
+*.ide
+
+# Ignore Entity Framework Migrations history
+Migrations/
+
+# Ignore database files
+*.mdf
+*.ldf
+*.db
+
+# Ignore temporary files
+*.tmp
+*.bak
+*.swp
+*.swo
+Thumbs.db
+ehthumbs.db
+.DS_Store
+
+# Ignore configuration files with sensitive data
+appsettings.json
+appsettings.Development.json
+secrets.json
+
+# Ignore JetBrains Rider project files
+.idea/
+*.iml
+
+# Ignore node modules (if using Node.js with .NET Core)
+node_modules/
+npm-debug.log
+yarn.lock
