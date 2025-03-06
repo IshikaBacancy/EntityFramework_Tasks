@@ -14,10 +14,26 @@ var connectionString = builder.Configuration.GetConnectionString(environment)
                        ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
 // Register DbContext with the selected connection string
+//builder.Services.AddDbContext<EFCoreDbContext>(options =>
+//{
+//    options.UseSqlServer(connectionString);
+ 
+
+//});
+
 builder.Services.AddDbContext<EFCoreDbContext>(options =>
-{
-    options.UseSqlServer(connectionString);
-});
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")),
+    ServiceLifetime.Scoped
+);
+//builder.Services.AddDbContext<EFCoreDbContext>(options =>
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")),
+//    ServiceLifetime.Singleton
+//);
+//builder.Services.AddDbContext<EFCoreDbContext>(options =>
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")),
+//    ServiceLifetime.Transient
+//);
+
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
