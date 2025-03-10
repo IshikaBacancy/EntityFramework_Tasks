@@ -32,20 +32,20 @@ namespace Day2_Task.Controllers
                 return BadRequest("Customer data is required.");
             }
 
-            // Ensure the request does not include a manually set CustomerId
-            customer.CustomerId = 0; // Ensure EF Core treats it as a new record
+            
+            customer.CustomerId = 0; 
 
-            // Check if a customer with the same name already exists
+         
             if (_context.Customers.Any(c => c.CustomerName == customer.CustomerName))
             {
                 return BadRequest("Customer with this name already exists.");
             }
 
-            // Add customer to database
+            
             _context.Customers.Add(customer);
             await _context.SaveChangesAsync();
 
-            // Return only required properties
+            
             var result = new
             {
                 customer.CustomerId,
