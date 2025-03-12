@@ -14,6 +14,8 @@ namespace Day2_Task.Models
         [EmailAddress(ErrorMessage = "Invalid email format")]
         public string Email {  get; set; }
 
+        public bool IsDeleted {  get; set; }
+
         public List<Order> Orders { get; set; } = new List<Order>();
     }
 }

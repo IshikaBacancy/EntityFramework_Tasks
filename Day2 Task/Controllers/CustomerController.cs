@@ -17,23 +17,20 @@ namespace Day2_Task.Controllers
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet] //get all customers 
         public async Task<ActionResult<IEnumerable<Customer>>> GetCustomers()
         {
             var customers = await _context.Customers.ToListAsync();
             return Ok(customers);  
         }
 
-        [HttpPost]
-        public async Task<IActionResult> InsertCustomer([FromBody] Customer customer)
+        [HttpPost] // Create customer checking entity Customer state
+        public async Task<IActionResult> AddCustomer([FromBody] Customer customer)
         {
             if (customer == null)
             {
                 return BadRequest("Customer data is required.");
-            }
-
-            
-            customer.CustomerId = 0; 
+            } 
 
          
             if (_context.Customers.Any(c => c.CustomerName == customer.CustomerName))
@@ -41,20 +38,74 @@ namespace Day2_Task.Controllers
                 return BadRequest("Customer with this name already exists.");
             }
 
-            
+           var state = _context.Entry(customer).State;
             _context.Customers.Add(customer);
+
+            state = _context.Entry(customer).State;
             await _context.SaveChangesAsync();
 
-            
-            var result = new
-            {
-                customer.CustomerId,
-                customer.CustomerName,
-                customer.Email
-            };
+            state = _context.Entry(customer).State;
 
-            return CreatedAtAction(nameof(GetCustomers), new { id = customer.CustomerId }, result);
+            return CreatedAtAction(nameof(GetCustomers), new { id = customer.CustomerId }, customer);
         }
+
+        
+
+
+        [HttpPut("{id}")] // Update by Customer id
+        public async Task<IActionResult> UpdateCustomer(int id, [FromBody] Customer updatedCustomer)
+        {
+            if(id!= updatedCustomer.CustomerId)
+            {
+                return BadRequest("Customer Id is mismatched");
+            }
+            var customer = await _context.Customers.FindAsync(id);
+            if(customer == null)
+            {
+                return BadRequest("Not found");
+            }
+            customer.CustomerName = updatedCustomer.CustomerName;
+            customer.Email = updatedCustomer.Email;
+
+            _context.Customers.Update(customer);
+            await _context.SaveChangesAsync();
+
+            return Ok(customer);
+        }
+
+        [HttpDelete("hard-delete/{id}")] // Delete by id 
+        public async Task<IActionResult> DeleteHardCustomer(int id)
+        {
+            var customer = await _context.Customers.FindAsync(id);
+
+            if (customer == null)
+            {
+                return NotFound("Customer not found");
+            }
+            _context.Customers.Remove(customer);
+            await _context.SaveChangesAsync();
+
+            return Ok(customer);
+        }
+
+        [HttpDelete("soft-delete/{id}")] // Delete by id 
+        public async Task<IActionResult> DeleteSoftCustomer(int id)
+        {
+            var customer = await _context.Customers.FindAsync(id);
+
+            if (customer == null)
+            {
+                return NotFound("Customer not found");
+            }
+
+
+
+            customer.IsDeleted = true;
+            await _context.SaveChangesAsync();
+
+            return Ok(customer);
+        }
+
 
 
     }

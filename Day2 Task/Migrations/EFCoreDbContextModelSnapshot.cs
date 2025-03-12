@@ -37,6 +37,9 @@ namespace Day2_Task.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.HasKey("CustomerId");
 
                     b.HasIndex("Email")

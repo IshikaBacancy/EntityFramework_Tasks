@@ -40,6 +40,8 @@ namespace Day2_Task.Data
             modelBuilder.Entity<Customer>()
                 .HasIndex(c => c.Email)
                 .IsUnique();
+
+            modelBuilder.Entity<Customer>().HasQueryFilter(c => !c.IsDeleted);
         }
 
 
