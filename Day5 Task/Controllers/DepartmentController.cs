@@ -49,19 +49,39 @@ namespace Day5_Task.Controllers
         }
 
         [HttpGet("GetAllDepartments")]
-        public IActionResult GetAllDepartments()
+        public async Task <IActionResult> GetAllDepartments([FromQuery] int page = 1, [FromQuery] int perPage = 3)
         {
-            var departments = _context.Departments
-                .Select(d => new { d.DepartmentId, d.DepartmentName })
-                .AsNoTracking()
-                .ToList();
+            if (page < 1) page = 1;
+            if (perPage < 1) perPage = 10;
+
+            var totalDepartments = await _context.Departments.CountAsync();
+
+            var departments = await _context.Departments
+               .OrderBy(d => d.DepartmentId) 
+               .Skip((page - 1) * perPage) 
+               .Take(perPage) 
+               .Select(d => new { d.DepartmentId, d.DepartmentName })
+               .AsNoTracking()
+               .ToListAsync();
+
+            //var departments = _context.Departments
+            //    .Select(d => new { d.DepartmentId, d.DepartmentName })
+            //    .AsNoTracking()
+            //    .ToList();
 
             if (!departments.Any())
             {
                 return NotFound("No departments found.");
             }
 
-            return Ok(departments);
+            return Ok(new
+            {
+                TotalItems = totalDepartments,
+                TotalPages = (int)System.Math.Ceiling(totalDepartments / (double)perPage),
+                CurrentPage = page,
+                PerPage = perPage,
+                Data = departments
+            });
         }
 
 
